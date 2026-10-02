@@ -1,0 +1,46 @@
+# Vegtype soil microbiome analysis
+
+Analysis code for:
+
+Tasoff P, Karaoz U, Wainwright H, Williams KH, Brodie EL, Banfield JF. *Montane Vegetation Type Shapes Soil Microbiome Functional Potential Across Organic Nutrient Scavenging and Inorganic Nitrogen Turnover Pathways.* (submitted to ISME Communications)
+
+Soil metagenomes (66 samples) from aspen, conifer, meadow, and sagebrush plots in the East River watershed near Crested Butte, Colorado (DOE Watershed Function SFA).
+
+## Contents
+
+| File | What it does |
+|---|---|
+| `vegtype_analysis.Rmd` | Main R analysis: rpS3 species group (SG) community analysis, MAG trait analysis, and AOA/AOB genome analyses |
+| `scripts/bbmap_rps3_script.sh` | BBMap read mapping to the longest scaffold of each rpS3 SG (SLURM) |
+| `scripts/reads_statistics.sh` | Total/mapped/unmapped read counts per BAM with samtools, used to normalize sample trait values by reads mapped to MAGs |
+| `scripts/Percent_umapped.R` | Percent of reads mapped to MAGs per sample and per vegetation type |
+| `scripts/foldseek_full_script.sh` | Foldseek search of ColabFold structures for unannotated AOA protein subfamilies against PDB |
+| `scripts/foldseek_norB_script.sh` | Same search against a custom NorB/HCP reference database (NO reductase search) |
+
+## vegtype_analysis.Rmd
+
+The Rmd is a working notebook and is meant to be run chunk by chunk, not knit top to bottom. File paths are absolute to the author's machine; change them to wherever you put the input tables. Sections, in order:
+
+- **Contig Analysis / Phyloseq Analysis of RPS3 centroids:** builds the raw count and normalized phyloseq objects, filtering, relative abundance plots, alpha diversity (Chao1, Pielou, Faith's PD), UniFrac ordinations and envfit, PERMANOVA (single-term and ordered `by = "terms"`, stratified by block), pH ANOVAs, and DESeq2 differential abundance with volcano and phylum count plots (Figures 2 and 3).
+- **Microtrait / Sample Analysis:** sets up bin and sample trait tables, normalizes sample traits by reads mapped to MAGs, and makes the pre/post normalization trait z-score heatmaps.
+- **Individual Traits and Taxa:** taxon relative abundance and coverage summaries used in Table 1, per-taxon trait heatmaps (Steroidobacteraceae, Xanthomonadales, *Edaphobacter*, Saccharibacteria), and lignin (laccase/peroxidase) traits.
+- **Level 3 sample trait analysis:** builds the microTrait granularity 3 bin and sample trait tables, Kruskal-Wallis and Dunn tests across vegetation types, the trait category heatmap (Figure 4), Wilcoxon tests for MAGs driving each significant trait, and the ED:EMP ratio.
+- **AOA analysis / Protein Clustering Analysis:** AOA distribution and pH relationships, trait heatmaps, HMM checks, protein subfamily clustering heatmaps, and ColabFold/Foldseek hit parsing (Figures 5 and 6).
+- **AOB analysis:** Nitrospirota distribution, traits, and the AOA vs AOB trait comparison.
+- **Bedrock Geology:** joins surface geology to the sample metadata and runs PERMANOVA with geology included.
+
+Developed with R 4.4.3. Main packages: phyloseq 1.50.0, vegan 2.7.2, DESeq2 1.46.0, picante 1.8.2, ape 5.8.1, phangorn 2.12.1, rstatix 0.7.3, EnhancedVolcano 1.24.0, pheatmap 1.0.13, tidyverse 2.0.0.
+
+## Upstream tools
+
+Run on the Banfield lab cluster before the R analysis (versions and parameters are in the Methods): HMMER, VSEARCH, MMseqs2, MAFFT, trimAl, IQ-TREE, BBMap, CoverM, Vamb, MetaBAT2, MaxBin2, CONCOCT, Abawaca, DAS Tool, dRep, GTDB-Tk, microTrait, ColabFold, and Foldseek.
+
+## Data
+
+- Metagenomic reads: JGI (GOLD IDs in the sample metadata supplementary table)
+- Genomes and assemblies: ggKbase (https://ggkbase.berkeley.edu/east_river_vegtype_analysis/organisms) and ESS-DIVE
+- Sample metadata and the tables used in the analysis: supplementary tables of the paper
+
+## Contact
+
+Preston Tasoff (GitHub: @prestontasoff). Corresponding authors are listed in the paper.

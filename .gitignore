@@ -1,0 +1,6 @@
+.DS_Store
+Icon*
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
